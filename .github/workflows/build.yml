@@ -24,12 +24,25 @@ jobs:
         path: xiaozhi-esp32
         submodules: recursive
 
-    - name: Copy board configuration
+    - name: Setup board configuration
       run: |
+        # Copy board files
         mkdir -p xiaozhi-esp32/main/boards/esp32c3-supermini
         cp board-config/config.h xiaozhi-esp32/main/boards/esp32c3-supermini/
         cp board-config/config.json xiaozhi-esp32/main/boards/esp32c3-supermini/
         cp board-config/esp32c3_supermini_board.cc xiaozhi-esp32/main/boards/esp32c3-supermini/
+        
+        # Register board in CMakeLists.txt (insert before endif)
+        cd xiaozhi-esp32/main
+        sed -i '/^endif()$/i elseif(CONFIG_BOARD_TYPE_ESP32C3_SUPERMINI)\n    set(BOARD_TYPE "esp32c3-supermini")\n    set(BUILTIN_TEXT_FONT font_puhui_basic_14_1)\n    set(BUILTIN_ICON_FONT font_awesome_14_1)' CMakeLists.txt
+        
+        # Add Kconfig option
+        cat >> Kconfig.projbuild << 'EOF'
+        
+        config BOARD_TYPE_ESP32C3_SUPERMINI
+            bool "ESP32-C3 SuperMini (MAX98357A + INMP441 + ST7789)"
+            depends on IDF_TARGET_ESP32C3
+        EOF
 
     - name: Install ESP-IDF
       run: |
@@ -43,7 +56,10 @@ jobs:
         source ~/esp-idf/export.sh
         cd xiaozhi-esp32
         idf.py set-target esp32c3
-        idf.py -D BOARD_TYPE=esp32c3-supermini build
+        # Append board config to sdkconfig
+        echo "CONFIG_BOARD_TYPE_ESP32C3_SUPERMINI=y" >> sdkconfig
+        cat sdkconfig.defaults.esp32c3 >> sdkconfig
+        idf.py build
 
     - name: Upload firmware artifact
       uses: actions/upload-artifact@v4
