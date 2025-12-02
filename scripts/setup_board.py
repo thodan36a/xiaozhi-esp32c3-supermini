@@ -8,25 +8,46 @@ def update_cmakelists(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
     
+    # Check if already added
+    if 'CONFIG_BOARD_TYPE_ESP32C3_SUPERMINI' in content:
+        print('CMakeLists.txt already contains ESP32C3_SUPERMINI, skipping')
+        return
+    
     new_board = '''elseif(CONFIG_BOARD_TYPE_ESP32C3_SUPERMINI)
     set(BOARD_TYPE "esp32c3-supermini")
     set(BUILTIN_TEXT_FONT font_puhui_basic_14_1)
     set(BUILTIN_ICON_FONT font_awesome_14_1)
 '''
     
-    lines = content.split('\n')
-    for i in range(len(lines)-1, -1, -1):
-        if lines[i].strip() == 'endif()':
-            lines.insert(i, new_board.rstrip())
-            break
+    # Find the last board config entry (e.g., CONFIG_BOARD_TYPE_HU_087) and insert after it
+    marker = 'elseif(CONFIG_BOARD_TYPE_HU_087)'
+    if marker in content:
+        # Find the endif() after this marker within the board config block
+        idx = content.find(marker)
+        # Find the endif() that closes the board selection block
+        rest = content[idx:]
+        # Look for the pattern: set(...) followed by endif()
+        lines = rest.split('\n')
+        insert_line = 0
+        for i, line in enumerate(lines):
+            if line.strip() == 'endif()' and i > 0:
+                # Calculate absolute position
+                insert_pos = idx + sum(len(l)+1 for l in lines[:i])
+                content = content[:insert_pos] + new_board + content[insert_pos:]
+                break
     
     with open(filepath, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(lines))
+        f.write(content)
     print('CMakeLists.txt updated')
 
 def update_kconfig(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
+    
+    # Check if already added
+    if 'BOARD_TYPE_ESP32C3_SUPERMINI' in content:
+        print('Kconfig.projbuild already contains ESP32C3_SUPERMINI, skipping')
+        return
     
     new_option = '''    config BOARD_TYPE_ESP32C3_SUPERMINI
         bool "ESP32-C3 SuperMini (MAX98357A + INMP441 + ST7789)"
