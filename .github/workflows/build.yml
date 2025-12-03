@@ -50,6 +50,11 @@ jobs:
         idf.py set-target esp32c3
         cp sdkconfig.defaults.esp32c3 sdkconfig.defaults 2>/dev/null || true
         echo "CONFIG_BOARD_TYPE_ESP32C3_SUPERMINI=y" >> sdkconfig.defaults
+        # 4MB Flash configuration for SuperMini
+        echo "CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y" >> sdkconfig.defaults
+        echo "CONFIG_ESPTOOLPY_FLASHSIZE=\"4MB\"" >> sdkconfig.defaults
+        echo "CONFIG_PARTITION_TABLE_CUSTOM=y" >> sdkconfig.defaults
+        echo "CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=\"partitions/v2/4m.csv\"" >> sdkconfig.defaults
         idf.py reconfigure
         idf.py build
       timeout-minutes: 60
