@@ -14,42 +14,66 @@
 // Simplex I2S mode (separate TX/RX channels)
 #define AUDIO_I2S_METHOD_SIMPLEX
 
-// MAX98357A Speaker (I2S TX)
-#define AUDIO_I2S_SPK_GPIO_BCLK  GPIO_NUM_2
-#define AUDIO_I2S_SPK_GPIO_LRCK  GPIO_NUM_3
-#define AUDIO_I2S_SPK_GPIO_DOUT  GPIO_NUM_4
+#pragma once
 
-// INMP441 Microphone (I2S RX)
-#define AUDIO_I2S_MIC_GPIO_SCK   GPIO_NUM_5
-#define AUDIO_I2S_MIC_GPIO_WS    GPIO_NUM_6
-#define AUDIO_I2S_MIC_GPIO_DIN   GPIO_NUM_7
+// -------------- Display -------------
+#define DISPLAY_SPI_HOST      SPI2_HOST
 
-// Buttons
-#define BOOT_BUTTON_GPIO        GPIO_NUM_9
-#define TOUCH_BUTTON_GPIO       GPIO_NUM_NC
-#define VOLUME_UP_BUTTON_GPIO   GPIO_NUM_NC
-#define VOLUME_DOWN_BUTTON_GPIO GPIO_NUM_NC
+// SPI pins for ST7735S
+#define DISPLAY_SCLK_GPIO     GPIO_NUM_4
+#define DISPLAY_MOSI_GPIO     GPIO_NUM_6
+#define DISPLAY_CS_GPIO       GPIO_NUM_7
+#define DISPLAY_DC_GPIO       GPIO_NUM_8
+#define DISPLAY_RST_GPIO      GPIO_NUM_10
+#define DISPLAY_BL_GPIO       GPIO_NUM_21
 
-// LED (板载LED)
-#define BUILTIN_LED_GPIO        GPIO_NUM_8
-
-// ST7789 LCD Display
-#define DISPLAY_MOSI_PIN        GPIO_NUM_10
-#define DISPLAY_CLK_PIN         GPIO_NUM_1
-#define DISPLAY_CS_PIN          GPIO_NUM_0
-#define DISPLAY_DC_PIN          GPIO_NUM_21
-#define DISPLAY_RST_PIN         GPIO_NUM_NC
-#define DISPLAY_BACKLIGHT_PIN   GPIO_NUM_NC
-
-#define DISPLAY_WIDTH           240
-#define DISPLAY_HEIGHT          240
+// ST7735S parameters
+#define DISPLAY_WIDTH           128
+#define DISPLAY_HEIGHT          160
+#define DISPLAY_SWAP_XY         true
 #define DISPLAY_MIRROR_X        false
-#define DISPLAY_MIRROR_Y        false
-#define DISPLAY_SWAP_XY         false
+#define DISPLAY_MIRROR_Y        true
 #define DISPLAY_INVERT_COLOR    true
 #define DISPLAY_RGB_ORDER       LCD_RGB_ELEMENT_ORDER_RGB
 #define DISPLAY_OFFSET_X        0
 #define DISPLAY_OFFSET_Y        0
 #define DISPLAY_SPI_MODE        0
+
+// -------------- Buttons -------------
+#define BOOT_BUTTON_GPIO        GPIO_NUM_9   // Wake / PTT
+#define BOOT_BUTTON_ACTIVE_LEVEL 0
+
+#define VOLUME_UP_BUTTON_GPIO   GPIO_NUM_2
+#define VOLUME_UP_ACTIVE_LEVEL  0
+
+#define VOLUME_DOWN_BUTTON_GPIO GPIO_NUM_1
+#define VOLUME_DOWN_ACTIVE_LEVEL 0
+
+// ========== WS2812 RGB LED ==========
+#define WS2812_DATA_GPIO        GPIO_NUM_5
+#define WS2812_COUNT            1
+#define WS2812_BRIGHTNESS       64   // 0-255
+
+// -------------- Audio (if used) -----
+// (Comment these if you are not using I2S)
+// Replace or remove if no audio hardware
+/*
+#define AUDIO_IN_BCLK_GPIO      GPIO_NUM_x
+#define AUDIO_IN_LRCK_GPIO      GPIO_NUM_x
+#define AUDIO_IN_DATA_GPIO      GPIO_NUM_x
+
+#define AUDIO_OUT_BCLK_GPIO     GPIO_NUM_x
+#define AUDIO_OUT_LRCK_GPIO     GPIO_NUM_x
+#define AUDIO_OUT_DATA_GPIO     GPIO_NUM_x
+*/
+
+// -------------- Misc ---------------
+// Default UART config (do not override unless needed)
+#define UART_CONSOLE            UART_NUM_0
+
+// Boot button hold timeout (ms) for config mode
+#define BOOT_BUTTON_HOLD_MS     1500
+
+// ------------- End of config.h ------
 
 #endif // _BOARD_CONFIG_H_
